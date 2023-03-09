@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>前端静态HTML页面自动检测更新-示例</title>
+  </head>
+  <body>
+    <h2>前端静态HTML页面自动检测更新-示例</h2>
+    <div>随便修改下页面内容，部署到web服务器后，即可体验提示更新~！</div>
+    <script src="https://unpkg.com/version-polling/dist/version-polling.min.js"></script>
+    <script>
+      const { createVersionPolling } = VersionPolling;
+
+      createVersionPolling({
+        appEtagKey: "__APP_ETAG__",
+        pollingInterval: 5 * 1000,
+        onUpdate: (self) => {
+          const result = confirm("页面有更新，点击确定刷新页面！");
+          if (result) {
+            self.onRefresh();
+          }
+        },
+      });
+    </script>
+  </body>
+</html>

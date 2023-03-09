@@ -1,0 +1,41 @@
+{
+  "name": "version-polling",
+  "version": "1.0.0",
+  "description": "一个用于实时检测 web 应用更新的 JavaScript 库",
+  "engines": {
+    "node": ">=14"
+  },
+  "type": "module",
+  "main": "dist/version-polling.common.js",
+  "module": "dist/version-polling.esm.js",
+  "browser": "dist/version-polling.js",
+  "unpkg": "dist/version-polling.min.js",
+  "types": "dist/types",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w"
+  },
+  "keywords": [
+    "web",
+    "update",
+    "upgrade",
+    "check",
+    "polling",
+    "version"
+  ],
+  "author": "JoeshuTT",
+  "homepage": "https://github.com/JoeshuTT/version-polling/#readme",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.21.0",
+    "@babel/preset-env": "^7.20.2",
+    "@rollup/plugin-babel": "^6.0.3",
+    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-terser": "^0.4.0",
+    "@rollup/plugin-typescript": "^11.0.0",
+    "rollup": "^3.18.0",
+    "rollup-plugin-dts": "^5.2.0",
+    "tslib": "^2.5.0",
+    "typescript": "^4.9.5"
+  }
+}
