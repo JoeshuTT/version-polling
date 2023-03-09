@@ -29,6 +29,15 @@ version-polling 是一个轻量级的 JavaScript 库，它可以实时检测 web
 3. 如果`etag`值不一致，说明有更新，则弹出更新提示，并引导用户手动**刷新页面**（例如弹窗提示），完成应用更新。
 4. 当页面不可见时（例如切换标签页或最小化窗口），停止实时检测任务；再次可见时（例如切换回标签页或还原窗口），恢复实时检测任务。
 
+## 浏览器兼容性
+
+适用于支持原生 ES 模块的现代浏览器，具体可参考以下 [browserslist](https://github.com/browserslist/browserslist) 配置
+
+```
+defaults and supports es6-module
+maintained node versions
+```
+
 ## 安装
 
 ```shell
