@@ -11,6 +11,8 @@ export declare class VersionPolling {
     appEtag: string;
     constructor(options: VersionPollingOptions);
     init(): Promise<void>;
+    start(): void;
+    stop(): void;
     onRefresh(): void;
     onCancel(): void;
 }
