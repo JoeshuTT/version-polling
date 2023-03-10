@@ -42,7 +42,7 @@ maintained node versions
 
 ```shell
 # 本地项目安装
-npm version-polling --save
+npm install version-polling --save
 ```
 
 ## 使用

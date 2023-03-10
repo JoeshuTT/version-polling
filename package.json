@@ -1,16 +1,17 @@
 {
   "name": "version-polling",
-  "version": "1.0.0",
+  "version": "1.1.2",
   "description": "一个用于实时检测 web 应用更新的 JavaScript 库",
   "engines": {
     "node": ">=14"
   },
   "type": "module",
-  "main": "dist/version-polling.common.js",
+  "types": "dist/types",
   "module": "dist/version-polling.esm.js",
+  "main": "dist/version-polling.common.js",
   "browser": "dist/version-polling.js",
   "unpkg": "dist/version-polling.min.js",
-  "types": "dist/types",
+  "jsdelivr": "dist/version-polling.min.js",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w"
