@@ -62,6 +62,8 @@ createVersionPolling({
     const result = confirm("页面有更新，点击确定刷新页面！");
     if (result) {
       self.onRefresh();
+    } else {
+      self.onCancel();
     }
     // 强制更新可以用alert
     // alert('有新版本，请刷新页面');
@@ -92,6 +94,8 @@ createVersionPolling({
           const result = confirm("页面有更新，点击确定刷新页面！");
           if (result) {
             self.onRefresh();
+          } else {
+            self.onCancel();
           }
         },
       });

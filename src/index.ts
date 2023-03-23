@@ -107,7 +107,9 @@ export class VersionPolling {
     window.location.reload();
   }
 
-  onCancel() {}
+  onCancel() {
+    localStorage.removeItem(`${this.options.appETagKey}`);
+  }
 }
 
 export function createVersionPolling(options: VersionPollingOptions) {

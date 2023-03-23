@@ -1,5 +1,5 @@
 /*!
-  * version-polling v1.0.0
+  * version-polling v1.1.5
   * (c) 2023 JoeshuTT
   * @license MIT
   */
@@ -189,7 +189,9 @@
       localStorage.setItem(`${this.options.appETagKey}`, this.appEtag);
       window.location.reload();
     }
-    onCancel() {}
+    onCancel() {
+      localStorage.removeItem(`${this.options.appETagKey}`);
+    }
   }
   function createVersionPolling(options) {
     const versionPolling = new VersionPolling(options);

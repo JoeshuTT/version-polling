@@ -1,6 +1,6 @@
 {
   "name": "version-polling",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "一个用于实时检测 web 应用更新的 JavaScript 库",
   "engines": {
     "node": ">=14"
