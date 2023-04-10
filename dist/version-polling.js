@@ -1,5 +1,5 @@
 /*!
-  * version-polling v1.1.5
+  * version-polling v1.1.6
   * (c) 2023 JoeshuTT
   * @license MIT
   */
@@ -127,19 +127,15 @@
     }
     async init() {
       const {
-        appETagKey,
         htmlFileUrl
       } = this.options;
-      const lastEtag = localStorage.getItem(`${appETagKey}`);
-      if (!lastEtag) {
-        const response = await fetch(htmlFileUrl, {
-          method: "HEAD",
-          cache: "no-cache"
-        });
-        const etag = response.headers.get("etag");
-        this.appEtag = etag;
-        localStorage.setItem(`${this.options.appETagKey}`, etag);
-      }
+      const response = await fetch(htmlFileUrl, {
+        method: "HEAD",
+        cache: "no-cache"
+      });
+      const etag = response.headers.get("etag");
+      this.appEtag = etag;
+      localStorage.setItem(`${this.options.appETagKey}`, etag);
       this.start();
     }
     start() {

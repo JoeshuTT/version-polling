@@ -44,18 +44,16 @@ export class VersionPolling {
   }
 
   async init() {
-    const { appETagKey, htmlFileUrl } = this.options;
+    const { htmlFileUrl } = this.options;
 
-    const lastEtag = localStorage.getItem(`${appETagKey}`);
-    if (!lastEtag) {
-      const response = await fetch(htmlFileUrl as string, {
-        method: "HEAD",
-        cache: "no-cache",
-      });
-      const etag = response.headers.get("etag") as string;
-      this.appEtag = etag;
-      localStorage.setItem(`${this.options.appETagKey}`, etag);
-    }
+    const response = await fetch(htmlFileUrl as string, {
+      method: "HEAD",
+      cache: "no-cache",
+    });
+
+    const etag = response.headers.get("etag") as string;
+    this.appEtag = etag;
+    localStorage.setItem(`${this.options.appETagKey}`, etag);
 
     this.start();
   }
