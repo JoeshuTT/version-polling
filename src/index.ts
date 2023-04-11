@@ -13,13 +13,13 @@ const defaultOptions = {
  * 页面隐藏时停止轮询任务，页面再度可见时在继续
  */
 function handleVisibilityChange() {
-  if (document.visibilityState === "hidden") {
+  if (document.visibilityState === "visible") {
     myWorker.postMessage({
-      code: "pause",
+      code: "resume",
     });
   } else {
     myWorker.postMessage({
-      code: "resume",
+      code: "pause",
     });
   }
 }
