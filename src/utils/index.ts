@@ -50,8 +50,11 @@ export function createWorkerFunc() {
     if (code === "pause") {
       clearInterval(timer);
       timer = null;
-    } else {
+    } else if (code === "resume") {
+      // 标签页激活时检测一次
       immediate && runReq();
+      timer = setInterval(runReq, pollingInterval);
+    } else {
       timer = setInterval(runReq, pollingInterval);
     }
   };
