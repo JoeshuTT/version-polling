@@ -112,14 +112,17 @@ createVersionPolling({
 
 Options
 
-| 参数            | 说明                                     | 类型             | 默认值                                   |
-| --------------- | ---------------------------------------- | ---------------- | ---------------------------------------- |
-| appETagKey      | web 应用更新唯一标识字段名               | `string`         | `__APP_ETAG__`                           |
-| pollingInterval | 轮询间隔，单位为毫秒，默认为 5 分钟      | `number`         | `5 * 60 * 1000 `                         |
-| immediate       | 初始化后, 立即触发实时监测               | `boolean`        | `true`                                   |
-| htmlFileUrl     | web 应用网站运行目录                     | `string`         | `${location.origin}${location.pathname}` |
-| silent          | 安静模式，为`true`时，不会进行实时监测   | `boolean`        | `false`                                  |
-| onUpdate        | 更新检测的回调函数，可以自定义更新的逻辑 | `(self) => void` | -                                        |
+| 参数                  | 说明                                       | 类型             | 默认值                                   |
+| --------------------- | ------------------------------------------ | ---------------- | ---------------------------------------- |
+| appETagKey            | web 应用更新唯一标识字段名                 | `string`         | `__APP_ETAG__`                           |
+| pollingInterval       | 轮询间隔，单位为毫秒，默认为 5 分钟        | `number`         | `5 * 60 * 1000 `                         |
+| immediate             | 初始化后, 立即触发实时监测                 | `boolean`        | `true`                                   |
+| htmlFileUrl           | web 应用网站运行目录                       | `string`         | `${location.origin}${location.pathname}` |
+| silent                | 安静模式，为`true`时，不会进行实时监测     | `boolean`        | `false`                                  |
+| silentPollingInterval | 安静模式，为`true`时，不做轮询任务         | `boolean`        | `false`                                  |
+| silentPageVisibility  | 安静模式，为`true`时，不做页面可见状态监听 | `boolean`        | `false`                                  |
+| forceUpdate           | 强制更新，为`true`是，取消也会检查更新     | `boolean`        | `false`                                  |
+| onUpdate              | 更新检测的回调函数，可以自定义更新的逻辑   | `(self) => void` | -                                        |
 
 ## 注意事项
 

@@ -10,7 +10,7 @@ const pkg = JSON.parse(
 
 const banner = `/*!
   * version-polling v${pkg.version}
-  * (c) ${new Date().getFullYear()} JoeshuTT
+  * (c) 2023 JoeshuTT
   * @license MIT
   */`;
 

@@ -1,14 +1,20 @@
 import { createWorker, createWorkerFunc, closeWorker } from "./utils/index";
+import { VersionPollingOptions } from "./types";
 
 let APP_ETAG_KEY = "__APP_ETAG__";
 let myWorker: Worker;
-const defaultOptions = {
+const defaultOptions: VersionPollingOptions = {
   appETagKey: APP_ETAG_KEY,
   pollingInterval: 5 * 60 * 1000, // 默认单位为毫秒
   immediate: true,
   htmlFileUrl: `${location.origin}${location.pathname}`,
   silent: false,
+  silentPollingInterval: false,
+  silentPageVisibility: false,
+  forceUpdate: false,
 };
+let attached = false;
+
 /**
  * 页面隐藏时停止轮询任务，页面再度可见时在继续
  */
@@ -24,15 +30,6 @@ function handleVisibilityChange() {
   }
 }
 
-export interface VersionPollingOptions {
-  appETagKey?: string;
-  pollingInterval?: number;
-  immediate: boolean;
-  htmlFileUrl?: string;
-  silent?: boolean;
-  onUpdate: (data: any) => void;
-}
-
 export class VersionPolling {
   options: VersionPollingOptions;
   appEtag = "";
@@ -46,12 +43,21 @@ export class VersionPolling {
   async init() {
     const { htmlFileUrl } = this.options;
 
-    const response = await fetch(htmlFileUrl as string, {
+    const response = await fetch(htmlFileUrl, {
       method: "HEAD",
       cache: "no-cache",
     });
 
-    const etag = response.headers.get("etag") as string;
+    if (Number(response.status) !== 200) {
+      throw new Error(`[version-polling]: status is ${response.status}`);
+    }
+
+    const etag = response.headers.get("etag");
+    // eslint-disable-next-line no-eq-null
+    if (etag == null) {
+      throw new Error(`[version-polling]: etag is null`);
+    }
+
     this.appEtag = etag;
     localStorage.setItem(`${this.options.appETagKey}`, etag);
 
@@ -59,10 +65,16 @@ export class VersionPolling {
   }
 
   start() {
-    const { appETagKey, pollingInterval, immediate, htmlFileUrl, silent } =
-      this.options;
+    const {
+      appETagKey,
+      pollingInterval,
+      immediate,
+      htmlFileUrl,
+      silent,
+      silentPollingInterval,
+      silentPageVisibility,
+    } = this.options;
 
-    // 安静模式
     if (silent) {
       return;
     }
@@ -73,16 +85,16 @@ export class VersionPolling {
       code: "start",
       data: {
         appETagKey,
-        htmlFileUrl,
         pollingInterval,
         immediate,
-        lastEtag: localStorage.getItem(`${appETagKey}`),
+        htmlFileUrl,
+        silentPollingInterval,
+        lastEtag: this.appEtag,
       },
     });
 
     myWorker.onmessage = (event) => {
       const { lastEtag, etag } = event.data;
-      this.appEtag = etag;
 
       if (lastEtag !== etag) {
         this.stop();
@@ -90,23 +102,33 @@ export class VersionPolling {
       }
     };
 
-    document.addEventListener("visibilitychange", handleVisibilityChange);
+    if (!silentPageVisibility) {
+      if (!attached) {
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+        attached = true;
+      }
+    }
   }
 
   stop() {
     if (myWorker) {
       closeWorker(myWorker);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      if (attached) {
+        document.removeEventListener(
+          "visibilitychange",
+          handleVisibilityChange
+        );
+        attached = false;
+      }
     }
   }
 
   onRefresh() {
-    localStorage.setItem(`${this.options.appETagKey}`, this.appEtag);
     window.location.reload();
   }
 
   onCancel() {
-    localStorage.removeItem(`${this.options.appETagKey}`);
+    this.options.forceUpdate && this.start();
   }
 }
 

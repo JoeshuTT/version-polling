@@ -21,20 +21,31 @@ export function createWorker(func: (e: any) => void) {
 }
 
 export function createWorkerFunc() {
-  let timer: any;
+  let timerId: any;
   let options: any;
 
   self.onmessage = (event: any) => {
     let code = event.data["code"];
     options = Object.assign({}, options, event.data["data"]);
-    const { htmlFileUrl, lastEtag, appETagKey, immediate, pollingInterval } =
-      options;
+
+    const {
+      htmlFileUrl,
+      lastEtag,
+      appETagKey,
+      immediate,
+      pollingInterval,
+      silentPollingInterval,
+    } = options;
 
     const runReq = () => {
       fetch(htmlFileUrl, {
         method: "HEAD",
         cache: "no-cache",
       }).then((response) => {
+        if (Number(response.status) !== 200) {
+          return;
+        }
+
         const etag = response.headers.get("etag");
 
         if (lastEtag !== etag) {
@@ -48,11 +59,15 @@ export function createWorkerFunc() {
     };
 
     if (code === "pause") {
-      clearInterval(timer);
-      timer = null;
-    } else {
+      clearInterval(timerId);
+      timerId = null;
+    } else if (code === "start") {
       immediate && runReq();
-      timer = setInterval(runReq, pollingInterval);
+      if (!silentPollingInterval) {
+        timerId = setInterval(runReq, pollingInterval);
+      }
+    } else {
+      runReq();
     }
   };
 

@@ -1,5 +1,5 @@
 /*!
-  * version-polling v1.1.7
+  * version-polling v1.2.0
   * (c) 2023 JoeshuTT
   * @license MIT
   */
@@ -50,7 +50,7 @@ function createWorker(func) {
   return worker;
 }
 function createWorkerFunc() {
-  let timer;
+  let timerId;
   let options;
   self.onmessage = event => {
     let code = event.data["code"];
@@ -60,13 +60,17 @@ function createWorkerFunc() {
       lastEtag,
       appETagKey,
       immediate,
-      pollingInterval
+      pollingInterval,
+      silentPollingInterval
     } = options;
     const runReq = () => {
       fetch(htmlFileUrl, {
         method: "HEAD",
         cache: "no-cache"
       }).then(response => {
+        if (Number(response.status) !== 200) {
+          return;
+        }
         const etag = response.headers.get("etag");
         if (lastEtag !== etag) {
           self.postMessage({
@@ -78,11 +82,15 @@ function createWorkerFunc() {
       });
     };
     if (code === "pause") {
-      clearInterval(timer);
-      timer = null;
-    } else {
+      clearInterval(timerId);
+      timerId = null;
+    } else if (code === "start") {
       immediate && runReq();
-      timer = setInterval(runReq, pollingInterval);
+      if (!silentPollingInterval) {
+        timerId = setInterval(runReq, pollingInterval);
+      }
+    } else {
+      runReq();
     }
   };
   return self;
@@ -98,8 +106,12 @@ const defaultOptions = {
   pollingInterval: 5 * 60 * 1000,
   immediate: true,
   htmlFileUrl: `${location.origin}${location.pathname}`,
-  silent: false
+  silent: false,
+  silentPollingInterval: false,
+  silentPageVisibility: false,
+  forceUpdate: false
 };
+let attached = false;
 /**
  * 页面隐藏时停止轮询任务，页面再度可见时在继续
  */
@@ -129,7 +141,14 @@ class VersionPolling {
       method: "HEAD",
       cache: "no-cache"
     });
+    if (Number(response.status) !== 200) {
+      throw new Error(`[version-polling]: status is ${response.status}`);
+    }
     const etag = response.headers.get("etag");
+    // eslint-disable-next-line no-eq-null
+    if (etag == null) {
+      throw new Error(`[version-polling]: etag is null`);
+    }
     this.appEtag = etag;
     localStorage.setItem(`${this.options.appETagKey}`, etag);
     this.start();
@@ -140,9 +159,10 @@ class VersionPolling {
       pollingInterval,
       immediate,
       htmlFileUrl,
-      silent
+      silent,
+      silentPollingInterval,
+      silentPageVisibility
     } = this.options;
-    // 安静模式
     if (silent) {
       return;
     }
@@ -151,10 +171,11 @@ class VersionPolling {
       code: "start",
       data: {
         appETagKey,
-        htmlFileUrl,
         pollingInterval,
         immediate,
-        lastEtag: localStorage.getItem(`${appETagKey}`)
+        htmlFileUrl,
+        silentPollingInterval,
+        lastEtag: this.appEtag
       }
     });
     myWorker.onmessage = event => {
@@ -162,27 +183,32 @@ class VersionPolling {
         lastEtag,
         etag
       } = event.data;
-      this.appEtag = etag;
       if (lastEtag !== etag) {
-        var _this$options$onUpdat, _this$options;
         this.stop();
-        (_this$options$onUpdat = (_this$options = this.options).onUpdate) === null || _this$options$onUpdat === void 0 ? void 0 : _this$options$onUpdat.call(_this$options, this);
+        this.options.onUpdate?.(this);
       }
     };
-    document.addEventListener("visibilitychange", handleVisibilityChange);
+    if (!silentPageVisibility) {
+      if (!attached) {
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+        attached = true;
+      }
+    }
   }
   stop() {
     if (myWorker) {
       closeWorker(myWorker);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      if (attached) {
+        document.removeEventListener("visibilitychange", handleVisibilityChange);
+        attached = false;
+      }
     }
   }
   onRefresh() {
-    localStorage.setItem(`${this.options.appETagKey}`, this.appEtag);
     window.location.reload();
   }
   onCancel() {
-    localStorage.removeItem(`${this.options.appETagKey}`);
+    this.options.forceUpdate && this.start();
   }
 }
 function createVersionPolling(options) {
