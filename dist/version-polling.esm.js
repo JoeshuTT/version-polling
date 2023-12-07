@@ -1,5 +1,5 @@
 /*!
-  * version-polling v1.2.0
+  * version-polling v1.2.2
   * (c) 2023 JoeshuTT
   * @license MIT
   */
@@ -48,7 +48,7 @@ function createWorker(func) {
   return worker;
 }
 function createWorkerFunc() {
-  let timerId;
+  let timerId = null;
   let options;
   self.onmessage = event => {
     let code = event.data["code"];
@@ -57,7 +57,6 @@ function createWorkerFunc() {
       htmlFileUrl,
       lastEtag,
       appETagKey,
-      immediate,
       pollingInterval,
       silentPollingInterval
     } = options;
@@ -79,16 +78,22 @@ function createWorkerFunc() {
         }
       });
     };
-    if (code === "pause") {
-      clearInterval(timerId);
-      timerId = null;
-    } else if (code === "start") {
-      immediate && runReq();
+    const startPollingTask = () => {
       if (!silentPollingInterval) {
         timerId = setInterval(runReq, pollingInterval);
       }
+    };
+    const pausePollingTask = () => {
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+    };
+    if (code === "pause") {
+      pausePollingTask();
     } else {
-      runReq();
+      runReq(); // 立即执行一次
+      startPollingTask();
     }
   };
   return self;
@@ -102,7 +107,6 @@ let myWorker;
 const defaultOptions = {
   appETagKey: APP_ETAG_KEY,
   pollingInterval: 5 * 60 * 1000,
-  immediate: true,
   htmlFileUrl: `${location.origin}${location.pathname}`,
   silent: false,
   silentPollingInterval: false,
@@ -155,7 +159,6 @@ class VersionPolling {
     const {
       appETagKey,
       pollingInterval,
-      immediate,
       htmlFileUrl,
       silent,
       silentPollingInterval,
@@ -170,7 +173,6 @@ class VersionPolling {
       data: {
         appETagKey,
         pollingInterval,
-        immediate,
         htmlFileUrl,
         silentPollingInterval,
         lastEtag: this.appEtag
