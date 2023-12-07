@@ -1,3 +1,5 @@
+import { VersionPollingOptions } from "../types";
+
 /**
  * 是否有值
  * @param {*} val
@@ -21,8 +23,11 @@ export function createWorker(func: (e: any) => void) {
 }
 
 export function createWorkerFunc() {
-  let timerId: any;
-  let options: any;
+  let timerId: ReturnType<typeof setTimeout> | null = null;
+  let options: Pick<
+    VersionPollingOptions,
+    "htmlFileUrl" | "appETagKey" | "pollingInterval" | "silentPollingInterval"
+  > & { lastEtag: string };
 
   self.onmessage = (event: any) => {
     let code = event.data["code"];
@@ -32,7 +37,6 @@ export function createWorkerFunc() {
       htmlFileUrl,
       lastEtag,
       appETagKey,
-      immediate,
       pollingInterval,
       silentPollingInterval,
     } = options;
@@ -58,16 +62,24 @@ export function createWorkerFunc() {
       });
     };
 
-    if (code === "pause") {
-      clearInterval(timerId);
-      timerId = null;
-    } else if (code === "start") {
-      immediate && runReq();
+    const startPollingTask = () => {
       if (!silentPollingInterval) {
         timerId = setInterval(runReq, pollingInterval);
       }
+    };
+
+    const pausePollingTask = () => {
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+    };
+
+    if (code === "pause") {
+      pausePollingTask();
     } else {
-      runReq();
+      runReq(); // 立即执行一次
+      startPollingTask();
     }
   };
 

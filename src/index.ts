@@ -6,7 +6,6 @@ let myWorker: Worker;
 const defaultOptions: VersionPollingOptions = {
   appETagKey: APP_ETAG_KEY,
   pollingInterval: 5 * 60 * 1000, // 默认单位为毫秒
-  immediate: true,
   htmlFileUrl: `${location.origin}${location.pathname}`,
   silent: false,
   silentPollingInterval: false,
@@ -68,7 +67,6 @@ export class VersionPolling {
     const {
       appETagKey,
       pollingInterval,
-      immediate,
       htmlFileUrl,
       silent,
       silentPollingInterval,
@@ -86,7 +84,6 @@ export class VersionPolling {
       data: {
         appETagKey,
         pollingInterval,
-        immediate,
         htmlFileUrl,
         silentPollingInterval,
         lastEtag: this.appEtag,
