@@ -1,12 +1,12 @@
 {
   "name": "version-polling",
-  "version": "1.2.2",
+  "version": "1.2.5",
   "description": "一个用于实时检测 web 应用更新的 JavaScript 库",
   "engines": {
     "node": ">=14"
   },
   "type": "module",
-  "types": "dist/types",
+  "types": "dist/index.d.ts",
   "module": "dist/version-polling.esm.js",
   "main": "dist/version-polling.common.js",
   "browser": "dist/version-polling.js",
@@ -27,8 +27,9 @@
   "homepage": "https://github.com/JoeshuTT/version-polling/#readme",
   "license": "MIT",
   "scripts": {
+    "dev": "rollup -c -w",
     "build": "rollup -c",
-    "dev": "rollup -c -w"
+    "prepare": "npm run build"
   },
   "devDependencies": {
     "@babel/core": "^7.21.0",
