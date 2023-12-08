@@ -1,0 +1,32 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true,
+    "source.fixAll.stylelint": true
+  },
+  // eslint
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "vue",
+    "typescript",
+    "typescriptreact"
+  ],
+  "cSpell.words": [
+    "apikey",
+    "catogary",
+    "flashdeliver",
+    "fundebug",
+    "list",
+    "localforage",
+    "micromessenger",
+    "openid",
+    "tabbar",
+    "Vant",
+    "Vuex",
+    "washcar",
+    "wechatdevtools",
+    "Weixin"
+  ]
+}

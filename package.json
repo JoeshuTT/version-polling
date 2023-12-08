@@ -12,10 +12,9 @@
   "browser": "dist/version-polling.js",
   "unpkg": "dist/version-polling.min.js",
   "jsdelivr": "dist/version-polling.min.js",
-  "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c -w"
-  },
+  "files": [
+    "dist"
+  ],
   "keywords": [
     "web",
     "update",
@@ -26,7 +25,11 @@
   ],
   "author": "JoeshuTT",
   "homepage": "https://github.com/JoeshuTT/version-polling/#readme",
-  "license": "ISC",
+  "license": "MIT",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w"
+  },
   "devDependencies": {
     "@babel/core": "^7.21.0",
     "@babel/preset-env": "^7.20.2",
