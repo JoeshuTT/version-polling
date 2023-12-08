@@ -1,5 +1,5 @@
-import { createWorker, createWorkerFunc, closeWorker } from "./utils/index";
-import { VersionPollingOptions } from "./types";
+import { createWorker, createWorkerFunc, closeWorker } from "./utils";
+import type { VersionPollingOptions } from "./types";
 
 let APP_ETAG_KEY = "__APP_ETAG__";
 let myWorker: Worker;
@@ -41,6 +41,10 @@ export class VersionPolling {
 
   async init() {
     const { htmlFileUrl } = this.options;
+
+    if (!htmlFileUrl) {
+      throw new Error("[version-polling]: htmlFileUrl is required");
+    }
 
     const response = await fetch(htmlFileUrl, {
       method: "HEAD",

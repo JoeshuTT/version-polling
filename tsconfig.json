@@ -7,12 +7,11 @@
 
     /* Modules */
     "module": "ESNext",
+    "moduleResolution": "Node",
 
     /* Emit */
     "declaration": true,
-    "declarationMap": false,
-    "emitDeclarationOnly": true,
-    "declarationDir": "./types",
+    "outDir": "dist",
 
     /* Interop Constraints */
     "esModuleInterop": true,
