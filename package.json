@@ -8,10 +8,8 @@
   "type": "module",
   "types": "dist/index.d.ts",
   "module": "dist/version-polling.esm.js",
-  "main": "dist/version-polling.common.js",
-  "browser": "dist/version-polling.js",
+  "main": "dist/version-polling.js",
   "unpkg": "dist/version-polling.min.js",
-  "jsdelivr": "dist/version-polling.min.js",
   "files": [
     "dist"
   ],

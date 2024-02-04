@@ -21,16 +21,9 @@ export default {
       file: pkg.module,
       format: "esm",
       banner,
-      name: "VersionPolling",
     },
     {
       file: pkg.main,
-      format: "cjs",
-      banner,
-      name: "VersionPolling",
-    },
-    {
-      file: pkg.browser,
       format: "umd",
       banner,
       name: "VersionPolling",
