@@ -1,44 +1,50 @@
 {
   "name": "version-polling",
-  "version": "1.2.6",
-  "description": "一个用于实时检测 web 应用更新的 JavaScript 库",
-  "engines": {
-    "node": ">=14"
-  },
-  "type": "module",
-  "types": "dist/index.d.ts",
-  "module": "dist/version-polling.esm.js",
-  "main": "dist/version-polling.js",
-  "unpkg": "dist/version-polling.min.js",
-  "files": [
-    "dist"
-  ],
+  "version": "1.3.0",
+  "description": "A JavaScript library for web application updates",
   "keywords": [
+    "version",
     "web",
     "update",
     "upgrade",
     "check",
-    "polling",
-    "version"
+    "polling"
   ],
-  "author": "JoeshuTT",
   "homepage": "https://github.com/JoeshuTT/version-polling/#readme",
+  "bugs": {
+    "url": "https://github.com/JoeshuTT/version-polling/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoeshuTT/version-polling.git"
+  },
+  "author": "Joe Shu <joeshuing@foxmail.com>",
   "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "dev": "rollup -c -w",
-    "build": "rollup -c",
-    "prepare": "npm run build"
+    "build": "rslib build",
+    "dev": "rslib build --watch",
+    "test": "vitest"
   },
   "devDependencies": {
-    "@babel/core": "^7.21.0",
-    "@babel/preset-env": "^7.20.2",
-    "@rollup/plugin-babel": "^6.0.3",
-    "@rollup/plugin-json": "^6.0.0",
-    "@rollup/plugin-terser": "^0.4.0",
-    "@rollup/plugin-typescript": "^11.0.0",
-    "rollup": "^3.18.0",
-    "rollup-plugin-dts": "^5.2.0",
-    "tslib": "^2.5.0",
-    "typescript": "^4.9.5"
+    "@biomejs/biome": "^1.9.3",
+    "@rslib/core": "^0.3.0",
+    "@types/node": "^22.8.1",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
   }
 }
