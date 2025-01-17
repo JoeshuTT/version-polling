@@ -1,41 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>前端静态HTML页面自动检测更新</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>前端静态HTML页面自动检测更新</title>
-</head>
-
-<body>
-  <h2>前端静态HTML页面自动检测更新-示例</h2>
-  <div>随便修改下页面内容，部署到web服务器后，即可体验提示更新~！</div>
-  <script>
-    (function () {
-      var s, t;
-      s = document.createElement("script");
-      s.type = "text/javascript";
-      s.id = "version-polling";
-      s.src = "//unpkg.com/version-polling/dist/version-polling.min.js"; // 在生产环境下，最好是下载对应文件，并托管在你自己的服务器或 CDN 上
-      t = document.getElementsByTagName("script")[0];
-      t.parentNode.appendChild(s, t);
-      s.onload = function () {
-        VersionPolling.createVersionPolling({
-          appETagKey: "__APP_ETAG__",
-          pollingInterval: 5 * 1000,
-          onUpdate: (self) => {
-            const result = confirm("页面有更新，点击确定刷新页面！");
-            if (result) {
-              self.onRefresh();
-            } else {
-              self.onCancel();
-            }
-          },
-        });
-      };
-    })();
-  </script>
-</body>
-
+  <body>
+    <h2>前端静态HTML页面自动检测更新-示例</h2>
+    <div>随便修改下页面内容，部署到web服务器后，即可体验提示更新~！</div>
+    <script>
+      (function () {
+        var s, t;
+        s = document.createElement('script');
+        s.type = 'text/javascript';
+        s.id = 'version-polling';
+        s.src = '//unpkg.com/version-polling/dist/version-polling.min.js'; // 在生产环境下，最好是下载对应文件，并托管在你自己的服务器或 CDN 上
+        t = document.getElementsByTagName('script')[0];
+        t.parentNode.appendChild(s, t);
+        s.onload = function () {
+          VersionPolling.createVersionPolling({
+            pollingInterval: 5 * 1000,
+            onUpdate: (self) => {
+              const result = confirm('页面有更新，点击确定刷新页面！');
+              if (result) {
+                self.onRefresh();
+              } else {
+                self.onCancel();
+              }
+            },
+          });
+        };
+      })();
+    </script>
+  </body>
 </html>
