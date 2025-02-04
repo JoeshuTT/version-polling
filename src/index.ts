@@ -255,7 +255,7 @@ export class VersionPolling {
 
     this.worker.onmessage = (event: MessageEvent) => {
       const { code, data } = event.data;
-      console.log('Worker said :', event.data);
+
       if (code === 'update') {
         let promptUpdate = true;
         const { vcType } = this.options;
