@@ -37,14 +37,24 @@
   "scripts": {
     "build": "rslib build",
     "dev": "rslib build --watch",
-    "test": "vitest"
+    "test": "vitest",
+    "changeset": "changeset",
+    "bump": "zx scripts/bump.mjs",
+    "prepare": "pnpm run build"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.3",
+    "@changesets/cli": "^2.27.12",
     "@rslib/core": "^0.3.0",
     "@types/node": "^22.8.1",
     "prettier": "^3.4.2",
     "typescript": "^5.7.2",
-    "vitest": "^2.1.8"
+    "vitest": "^2.1.8",
+    "zx": "^8.3.2"
+  },
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=9.0.0"
   }
 }
