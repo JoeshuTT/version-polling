@@ -224,6 +224,7 @@ import { createVersionPolling } from 'version-polling';
 
 createVersionPolling({
   vcType: 'chunkHash',
+  chunkName: 'index',
   silent: import.meta.env.MODE === 'development', // 开发环境下不检测
   onUpdate: (self) => {
     const result = confirm('页面有更新，点击确定刷新页面！');
