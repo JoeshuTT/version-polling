@@ -5,7 +5,12 @@ import router from './router';
 import './assets/main.css';
 
 import { createVersionPolling } from 'version-polling';
-// 安装调试本地 version-polling 包
+
+/**
+ *
+ * 调试version-polling
+ *
+ */
 createVersionPolling({
   // eventTriggerList: ['popstate'],
   pollingInterval: 5 * 1000,
