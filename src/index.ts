@@ -95,119 +95,129 @@ export class VersionPolling {
       return;
     }
 
+    // web worker 脚本代码降级到es6，避免打包出现兼容问题。
     this.worker = createWorker(() => {
       let timerId: ReturnType<typeof setTimeout> | null = null;
       let globalData: WorkerGlobalData;
       let versionControl: VersionControl;
       const versionControlMap = new Map();
       versionControlMap.set('etag', {
-        start: async () => {
-          const res = await versionControl.fetchEtag();
-          versionControl.versionFlag = res.versionFlag;
+        start: () => {
+          versionControl.fetchEtag().then((res) => {
+            versionControl.versionFlag = res.versionFlag;
+          });
         },
-        check: async () => {
-          const res = await versionControl.fetchEtag();
-          if (res.versionFlag !== versionControl.versionFlag) {
-            self.postMessage({
-              code: 'update',
-              data: {
-                versionFlag: res.versionFlag,
-                localVersionFlag: versionControl.versionFlag,
-              },
-            });
-          }
+        check: () => {
+          versionControl.fetchEtag().then((res) => {
+            if (res.versionFlag !== versionControl.versionFlag) {
+              self.postMessage({
+                code: 'update',
+                data: {
+                  versionFlag: res.versionFlag,
+                  localVersionFlag: versionControl.versionFlag,
+                },
+              });
+            }
+          });
         },
-        fetchEtag: async () => {
+        fetchEtag: () => {
           if (!globalData.htmlFileUrl) {
             throw new Error('[version-polling]: htmlFileUrl is required');
           }
-          const response = await fetch(globalData.htmlFileUrl, {
+          return fetch(globalData.htmlFileUrl, {
             method: 'HEAD',
             cache: 'no-cache',
+          }).then((response) => {
+            const etag = response.headers.get('etag');
+            if (!etag) {
+              throw new Error('[version-polling]: etag is null');
+            }
+            return {
+              versionFlag: etag,
+            };
           });
-          const etag = response.headers.get('etag');
-          if (!etag) {
-            throw new Error('[version-polling]: etag is null');
-          }
-          return {
-            versionFlag: etag,
-          };
         },
       });
       versionControlMap.set('chunkHash', {
-        start: async () => {
-          const res = await versionControl.fetchChunkHash();
-          versionControl.versionFlag = res.versionFlag;
+        start: () => {
+          versionControl.fetchChunkHash().then((res) => {
+            versionControl.versionFlag = res.versionFlag;
+          });
         },
-        check: async () => {
-          const res = await versionControl.fetchChunkHash();
-          if (res.versionFlag !== versionControl.versionFlag) {
-            self.postMessage({
-              code: 'update',
-              data: {
-                versionFlag: res.versionFlag,
-                localVersionFlag: versionControl.versionFlag,
-              },
-            });
-          }
+        check: () => {
+          versionControl.fetchChunkHash().then((res) => {
+            if (res.versionFlag !== versionControl.versionFlag) {
+              self.postMessage({
+                code: 'update',
+                data: {
+                  versionFlag: res.versionFlag,
+                  localVersionFlag: versionControl.versionFlag,
+                },
+              });
+            }
+          });
         },
-        fetchChunkHash: async () => {
+        fetchChunkHash: () => {
           if (!globalData.htmlFileUrl) {
             throw new Error('[version-polling]: htmlFileUrl is required');
           }
-          const response = await fetch(
-            `${globalData.htmlFileUrl}?t=${+new Date()}`,
-          ).then((response) => response.text());
-          const getChunkByHtml = (htmlText: string, name = 'index') => {
-            const chunkRegExp = new RegExp(
-              `<script(?:.*)src=(?:["']?)(.*?${name}.*?)(?:["']?)>`,
-              's',
-            );
-            const [, src] = htmlText.match(chunkRegExp) || [];
-            return src;
-          };
-          const chunkHash = getChunkByHtml(response, globalData.chunkName);
-          if (!chunkHash) {
-            throw new Error('[version-polling]: chunkHash is null');
-          }
-          return {
-            versionFlag: chunkHash,
-          };
+          return fetch(`${globalData.htmlFileUrl}?t=${+new Date()}`)
+            .then((response) => response.text())
+            .then((response) => {
+              const getChunkByHtml = (htmlText: string, name = 'index') => {
+                const chunkRegExp = new RegExp(
+                  `<script(?:.*)src=(?:["']?)(.*?${name}.*?)(?:["']?)>`,
+                  's',
+                );
+                const [, src] = htmlText.match(chunkRegExp) || [];
+                return src;
+              };
+              const chunkHash = getChunkByHtml(response, globalData.chunkName);
+              if (!chunkHash) {
+                throw new Error('[version-polling]: chunkHash is null');
+              }
+              return {
+                versionFlag: chunkHash,
+              };
+            });
         },
       });
       versionControlMap.set('versionJson', {
-        start: async () => {
-          const res = await versionControl.fetchVersionFile();
-          versionControl.versionFlag = res.versionFlag;
+        start: () => {
+          versionControl.fetchVersionFile().then((res) => {
+            versionControl.versionFlag = res.versionFlag;
+          });
         },
-        check: async () => {
-          const res = await versionControl.fetchVersionFile();
-          if (res.versionFlag !== versionControl.versionFlag) {
-            self.postMessage({
-              code: 'update',
-              data: {
-                versionFlag: res.versionFlag,
-                versionInfo: res.versionInfo,
-                localVersionFlag: versionControl.versionFlag,
-              },
-            });
-          }
+        check: () => {
+          versionControl.fetchVersionFile().then((res) => {
+            if (res.versionFlag !== versionControl.versionFlag) {
+              self.postMessage({
+                code: 'update',
+                data: {
+                  versionFlag: res.versionFlag,
+                  versionInfo: res.versionInfo,
+                  localVersionFlag: versionControl.versionFlag,
+                },
+              });
+            }
+          });
         },
-        fetchVersionFile: async () => {
+        fetchVersionFile: () => {
           if (!globalData.versionFileUrl) {
             throw new Error('[version-polling]: versionFileUrl is required');
           }
-          const response = await fetch(
-            `${globalData.versionFileUrl}?t=${+new Date()}`,
-          ).then((response) => response.json());
-          const { version } = response;
-          if (!version) {
-            throw new Error('[version-polling]: version is null');
-          }
-          return {
-            versionFlag: version,
-            versionInfo: response,
-          };
+          return fetch(`${globalData.versionFileUrl}?t=${+new Date()}`)
+            .then((response) => response.json())
+            .then((response) => {
+              const { version } = response;
+              if (!version) {
+                throw new Error('[version-polling]: version is null');
+              }
+              return {
+                versionFlag: version,
+                versionInfo: response,
+              };
+            });
         },
       });
 
